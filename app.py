@@ -222,5 +222,23 @@ with st.expander("Show raw call price grid (Spot vs Volatility)"):
     st.dataframe(call_df.style.format("{:.4f}"), height=300)
 
 with st.expander("Show raw put price grid (Spot vs Volatility)"):
-    st.dataframe(put_df.style.format_
+    st.dataframe(put_df.style.format("{:.4f}"), height=300)
+
+st.markdown(
+    """
+**Notes & tips**
+
+- Top table shows model inputs plus inspect values.
+
+- Selected option price shown big and colored below.
+
+- Heatmaps 1 & 2 show Call and Put prices vs Spot and Volatility for fixed time to expiry.
+
+- Heatmap 3 shows option price decay over time and spot for the selected option type.
+
+- Contour lines are optional.
+
+- Want Greeks or other plots? Just ask!
+"""
+)
 
