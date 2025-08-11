@@ -92,11 +92,20 @@ summary_data = {
 }
 summary_df = pd.DataFrame(summary_data)
 
+# Helper function to format only numeric values
+def format_value(val):
+    try:
+        return f"{float(val):.4f}"
+    except:
+        return val
+
+styled_df = summary_df.style.format({"Value": format_value})
+
 st.title("Black-Scholes Option Pricing Dashboard")
 
 # Display model inputs and inspect values in one table
 st.markdown("### Model Inputs and Inspect Values")
-st.dataframe(summary_df.style.format({"Value": "{:.4f}"}), width=700, height=180)
+st.dataframe(styled_df, width=700, height=180)
 
 # Show inspected option price big & bold below table with color
 price_color = "#2e7d32" if option_type == "call" else "#c62828"
