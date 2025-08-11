@@ -235,3 +235,17 @@ with st.expander("Show raw put price grid (Spot vs Volatility)"):
 st.markdown(
     """
 **Notes & tips**
+
+- The top table shows model inputs and inspect values.
+
+- The large colored price below the table is the option price at the chosen inspect inputs.
+
+- Heatmaps 1 & 2 show call and put prices over spot and volatility for the fixed time to expiry.
+
+- Heatmap 3 shows option price decay over time and spot for the selected option type.
+
+- Contour lines can be toggled on/off.
+
+- Let me know if you want Greeks or more features!
+"""
+)
