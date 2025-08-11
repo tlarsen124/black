@@ -41,7 +41,7 @@ def black_scholes_price(S, K, r, q, sigma, T, option_type="call"):
 
     return price
 
-# Sidebar controls: Model inputs + inspect inputs
+# Sidebar controls
 st.sidebar.header("Model Inputs")
 
 K = st.sidebar.number_input("Strike (K)", value=100.0, min_value=0.01, step=1.0, format="%.2f")
@@ -81,10 +81,10 @@ S_grid, sigma_grid = np.meshgrid(S_values, sigma_values)
 call_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, option_type="call")
 put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, option_type="put")
 
-# Inspect prices at chosen values for user-selected option type
+# Inspect price at chosen values for selected option type
 inspect_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type=option_type)
 
-# Summary table without price (will show price big below)
+# Summary table (variables only)
 summary_data = {
     "Variable": ["Strike (K)", "Risk-free rate (r)", "Dividend yield (q)", 
                  "Underlying Asset Price", "Volatility σ", "Time to expiry (T)", "Option type"],
@@ -92,18 +92,18 @@ summary_data = {
 }
 summary_df = pd.DataFrame(summary_data)
 
-# Helper function to format only numeric values
-def format_value(val):
+# Safe formatter for summary table
+def safe_format(x):
     try:
-        return f"{float(val):.4f}"
-    except:
-        return val
+        return f"{float(x):.4f}"
+    except Exception:
+        return x
 
-styled_df = summary_df.style.format({"Value": format_value})
+styled_df = summary_df.style.format({"Value": safe_format})
 
 st.title("Black-Scholes Option Pricing Dashboard")
 
-# Display model inputs and inspect values in one table
+# Display model inputs and inspect values table
 st.markdown("### Model Inputs and Inspect Values")
 st.dataframe(styled_df, width=700, height=180)
 
@@ -176,7 +176,6 @@ with col2:
     st.plotly_chart(fig_put, use_container_width=True)
 
 # Heatmap 3: Option price decay for selected option type with time (x-axis) and spot (y-axis)
-# Time goes from chosen_T down to 0 (decay to expiry)
 T_decay_values = np.linspace(chosen_T, 0, 50)
 S_decay_values = np.linspace(S_min, S_max, S_steps)
 S_decay_grid, T_decay_grid = np.meshgrid(S_decay_values, T_decay_values)
@@ -236,18 +235,3 @@ with st.expander("Show raw put price grid (Spot vs Volatility)"):
 st.markdown(
     """
 **Notes & tips**
-
-- Top table shows model inputs plus inspect values.
-
-- Selected option price shown big and colored below.
-
-- Heatmaps 1 & 2 show Call and Put prices vs Spot and Volatility for fixed time to expiry.
-
-- Heatmap 3 shows option price decay over time and spot for the selected option type.
-
-- Contour lines are optional.
-
-- Want Greeks or other plots? Just ask!
-"""
-)
-
