@@ -41,15 +41,15 @@ def black_scholes_price(S, K, r, q, sigma, T, option_type="call"):
 
     return price
 
-# Sidebar controls
-st.sidebar.header("Model inputs")
+# Sidebar controls: Model inputs + inspect inputs
+st.sidebar.header("Model Inputs")
 
 K = st.sidebar.number_input("Strike (K)", value=100.0, min_value=0.01, step=1.0, format="%.2f")
 r = st.sidebar.number_input("Risk-free rate (annual) r", value=0.02, format="%.4f")
 q = st.sidebar.number_input("Dividend yield (annual) q", value=0.00, format="%.4f")
 
 st.sidebar.markdown("---")
-st.sidebar.write("Spot / Volatility / Time grid")
+st.sidebar.write("Spot / Volatility / Time Grid")
 
 S_min = st.sidebar.number_input("Spot min", value=50.0, format="%.2f")
 S_max = st.sidebar.number_input("Spot max", value=150.0, format="%.2f")
@@ -59,9 +59,13 @@ sigma_min = st.sidebar.number_input("Volatility min (σ)", value=0.05, min_value
 sigma_max = st.sidebar.number_input("Volatility max (σ)", value=0.6, min_value=0.0001, format="%.4f")
 sigma_steps = st.sidebar.slider("Vol steps", min_value=10, max_value=50, value=20, step=1)
 
-T_min = 0.01  # minimum positive time to expiry to avoid divide by zero in time decay plot
-T_max = 2.0   # max years for time decay plot
-T_steps = 50  # time steps for time decay plot
+st.sidebar.markdown("---")
+st.sidebar.write("Inspect Values")
+
+chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=(S_min + S_max) / 2, format="%.4f")
+chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
+chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.4f")
+option_type = st.sidebar.selectbox("Option type", ["call", "put"])
 
 st.sidebar.markdown("---")
 st.sidebar.write("Visualization options")
@@ -69,13 +73,7 @@ log_spot = st.sidebar.checkbox("Plot spot on log scale (x-axis for grids 1 & 2)"
 show_contours = st.sidebar.checkbox("Show contour lines (all heatmaps)", value=True)
 colormap = st.sidebar.selectbox("Color map (plotly)", options=["Viridis","Plasma","Inferno","Magma","Cividis"], index=0)
 
-st.sidebar.markdown("---")
-st.sidebar.header("Inspect values")
-chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=(S_min + S_max) / 2, format="%.4f")
-chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
-chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.4f")
-
-# Compute grids
+# Compute grids for heatmaps 1 & 2 (call & put) at fixed T = chosen_T
 S_values = np.linspace(S_min, S_max, S_steps)
 sigma_values = np.linspace(sigma_min, sigma_max, sigma_steps)
 S_grid, sigma_grid = np.meshgrid(S_values, sigma_values)
@@ -83,35 +81,28 @@ S_grid, sigma_grid = np.meshgrid(S_values, sigma_values)
 call_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, option_type="call")
 put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, option_type="put")
 
-# Inspect prices at chosen values
-call_price_inspect = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
-put_price_inspect = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
+# Inspect prices at chosen values for user-selected option type
+inspect_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type=option_type)
 
-# Summary table (without call/put prices)
+# Summary table without price (will show price big below)
 summary_data = {
     "Variable": ["Strike (K)", "Risk-free rate (r)", "Dividend yield (q)", 
-                 "Inspect Underlying Asset Price", "Inspect Volatility σ", "Inspect Time to expiry (T)"],
-    "Value": [f"{K:.2f}", f"{r:.4f}", f"{q:.4f}", f"{chosen_spot:.4f}", f"{chosen_sigma:.4f}", f"{chosen_T:.4f}"],
+                 "Underlying Asset Price", "Volatility σ", "Time to expiry (T)", "Option type"],
+    "Value": [f"{K:.2f}", f"{r:.4f}", f"{q:.4f}", f"{chosen_spot:.4f}", f"{chosen_sigma:.4f}", f"{chosen_T:.4f}", option_type.capitalize()],
 }
 summary_df = pd.DataFrame(summary_data)
 
-# Style function for summary table
-def style_table(s):
-    return ['' for _ in s]
-
 st.title("Black-Scholes Option Pricing Dashboard")
 
+# Display model inputs and inspect values in one table
 st.markdown("### Model Inputs and Inspect Values")
-st.dataframe(summary_df.style.apply(style_table, axis=1), width=700, height=180)
+st.dataframe(summary_df.style.format({"Value": "{:.4f}"}), width=700, height=180)
 
-# Display Call and Put price at inspect values, big and colored
-col_call_put = st.columns(2)
-with col_call_put[0]:
-    st.markdown(f'<div style="font-size:40px; font-weight:bold; color:#2e7d32;">Call Price: {call_price_inspect:.4f}</div>', unsafe_allow_html=True)
-with col_call_put[1]:
-    st.markdown(f'<div style="font-size:40px; font-weight:bold; color:#c62828;">Put Price: {put_price_inspect:.4f}</div>', unsafe_allow_html=True)
+# Show inspected option price big & bold below table with color
+price_color = "#2e7d32" if option_type == "call" else "#c62828"
+st.markdown(f'<div style="font-size:40px; font-weight:bold; color:{price_color}; margin-top:10px;">{option_type.capitalize()} Price at Inspect Values: {inspect_price:.4f}</div>', unsafe_allow_html=True)
 
-# Prepare DataFrames for heatmaps
+# Prepare DataFrames for heatmaps 1 & 2
 call_df = pd.DataFrame(call_price_grid, index=np.round(sigma_values,8), columns=np.round(S_values,4))
 call_df.index.name = "Volatility σ"
 call_df.columns.name = "Spot S"
@@ -120,8 +111,8 @@ put_df = pd.DataFrame(put_price_grid, index=np.round(sigma_values,8), columns=np
 put_df.index.name = "Volatility σ"
 put_df.columns.name = "Spot S"
 
-# Heatmap 1 & 2: Call and Put prices vs Spot and Volatility
-col1, col2, col3 = st.columns([2, 2, 2])
+# Layout heatmaps 1 & 2 side-by-side: Call and Put prices vs Spot and Volatility
+col1, col2 = st.columns(2)
 
 def add_heatmap(fig, z, x, y, title, colorbar_title):
     heatmap = go.Heatmap(
@@ -175,58 +166,55 @@ with col2:
     fig_put = add_heatmap(fig_put, put_price_grid, np.round(S_values, 2), np.round(sigma_values, 4), "Put Option Price Heatmap", "Put Price")
     st.plotly_chart(fig_put, use_container_width=True)
 
-# Heatmap 3: Underlying Asset Price (y-axis) vs Time to Expiry (x-axis), showing Call price time decay
-# Fix spot range and time range grid
-S_time_values = np.linspace(S_min, S_max, S_steps)
-T_time_values = np.linspace(T_min, T_max, T_steps)
-S_time_grid, T_time_grid = np.meshgrid(S_time_values, T_time_values)
+# Heatmap 3: Option price decay for selected option type with time (x-axis) and spot (y-axis)
+# Time goes from chosen_T down to 0 (decay to expiry)
+T_decay_values = np.linspace(chosen_T, 0, 50)
+S_decay_values = np.linspace(S_min, S_max, S_steps)
+S_decay_grid, T_decay_grid = np.meshgrid(S_decay_values, T_decay_values)
 
-call_time_decay_grid = black_scholes_price(S_time_grid, K, r, q, chosen_sigma, T_time_grid, option_type="call")
+price_decay_grid = black_scholes_price(S_decay_grid, K, r, q, chosen_sigma, T_decay_grid, option_type=option_type)
 
-# Calculate breakeven line (where call price >= 0)
-# Breakeven approx for calls: spot where intrinsic value >= 0 at expiry, here just price > 0
-# We'll shade prices <= 0 as "no profit" zone
+st.markdown("---")
+st.markdown("### Option Price vs Underlying Asset Price and Time to Expiry (Time Decay)")
 
-with col3:
-    fig_time_decay = go.Figure()
+fig_decay = go.Figure()
 
-    heatmap = go.Heatmap(
-        z=call_time_decay_grid,
-        x=np.round(T_time_values, 4),
-        y=np.round(S_time_values, 2),
-        colorscale=colormap.lower(),
-        colorbar=dict(title="Call Price"),
-        reversescale=False,
-        hovertemplate="Time to expiry: %{x:.4f}<br>Spot: %{y}<br>Call Price: %{z:.4f}<extra></extra>",
-    )
-    fig_time_decay.add_trace(heatmap)
+heatmap_decay = go.Heatmap(
+    z=price_decay_grid,
+    x=np.round(T_decay_values, 4),
+    y=np.round(S_decay_values, 2),
+    colorscale=colormap.lower(),
+    colorbar=dict(title=f"{option_type.capitalize()} Price"),
+    reversescale=False,
+    hovertemplate="Time to expiry: %{x:.4f}<br>Spot: %{y}<br>Price: %{z:.4f}<extra></extra>",
+)
+fig_decay.add_trace(heatmap_decay)
 
-    if show_contours:
-        fig_time_decay.add_trace(go.Contour(
-            z=call_time_decay_grid,
-            x=np.round(T_time_values, 4),
-            y=np.round(S_time_values, 2),
-            contours=dict(
-                coloring="none",
-                showlabels=True,
-                start=np.nanmin(call_time_decay_grid),
-                end=np.nanmax(call_time_decay_grid),
-                size=(np.nanmax(call_time_decay_grid) - np.nanmin(call_time_decay_grid))/8,
-            ),
-            line_width=1,
-            colorscale="Greys",
-            showscale=False,
-        ))
+if show_contours:
+    fig_decay.add_trace(go.Contour(
+        z=price_decay_grid,
+        x=np.round(T_decay_values, 4),
+        y=np.round(S_decay_values, 2),
+        contours=dict(
+            coloring="none",
+            showlabels=True,
+            start=np.nanmin(price_decay_grid),
+            end=np.nanmax(price_decay_grid),
+            size=(np.nanmax(price_decay_grid) - np.nanmin(price_decay_grid))/8,
+        ),
+        line_width=1,
+        colorscale="Greys",
+        showscale=False,
+    ))
 
-    fig_time_decay.update_layout(
-        title="Call Option Price vs Underlying Asset Price and Time to Expiry",
-        xaxis_title="Time to expiry (years)",
-        yaxis_title="Underlying Asset Price (S)",
-        height=650,
-        margin=dict(t=50, l=50, r=50, b=50),
-    )
+fig_decay.update_layout(
+    height=650,
+    margin=dict(t=50, l=50, r=50, b=50),
+    xaxis_title="Time to expiry (years)",
+    yaxis_title="Underlying Asset Price (S)",
+)
 
-    st.plotly_chart(fig_time_decay, use_container_width=True)
+st.plotly_chart(fig_decay, use_container_width=True)
 
 st.markdown("---")
 
@@ -234,23 +222,5 @@ with st.expander("Show raw call price grid (Spot vs Volatility)"):
     st.dataframe(call_df.style.format("{:.4f}"), height=300)
 
 with st.expander("Show raw put price grid (Spot vs Volatility)"):
-    st.dataframe(put_df.style.format("{:.4f}"), height=300)
-
-st.markdown(
-    """
-**Notes & tips**
-
-- Top table shows model inputs plus inspect values.
-
-- Call and Put prices at inspect values are shown big and colored.
-
-- Heatmaps 1 & 2 show Call and Put prices vs Spot and Volatility.
-
-- Heatmap 3 shows Call price vs Underlying Asset Price and Time to Expiry — illustrating time decay.
-
-- Contour lines are optional.
-
-- Want Greeks or Put time decay plot? Just ask!
-"""
-)
+    st.dataframe(put_df.style.format_
 
