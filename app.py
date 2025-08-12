@@ -104,7 +104,7 @@ summary_df = pd.DataFrame(summary_data)
 # Safe formatter for summary table
 def safe_format(x):
     try:
-        return f"{float(x):.4f}"
+        return f"{float(x):.2f}"
     except Exception:
         return x
 
