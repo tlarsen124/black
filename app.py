@@ -55,7 +55,6 @@ q = st.sidebar.number_input("Dividend yield (annual) q", value=0.00, format="%.2
 chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=100.00, format="%.2f")
 chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.2f")
 chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.2f")
-option_type = st.sidebar.selectbox("Option type", ["call", "put"])
 
 
 st.sidebar.header("Heatmap Parameters")
@@ -122,8 +121,8 @@ st.dataframe(styled_df, width=700, height=180)
 
 # Show inspected option price big & bold below table with color
 
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price at Inspect Values: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price at Inspect Values: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
 
 
 # ---------------------------
