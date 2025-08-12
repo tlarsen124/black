@@ -210,4 +210,65 @@ if show_contours:
     fig_decay.add_trace(go.Contour(
         z=price_decay_grid,
         x=np.round(T_decay_values, 4),
-        y=np.round(S_decay_va
+        y=np.round(S_decay_values, 2),
+        contours=dict(
+            coloring="none",
+            showlabels=True,
+            start=np.nanmin(price_decay_grid),
+            end=np.nanmax(price_decay_grid),
+            size=(np.nanmax(price_decay_grid) - np.nanmin(price_decay_grid))/8,
+        ),
+        line_width=1,
+        colorscale="Greys",
+        showscale=False,
+    ))
+
+fig_decay.update_layout(
+    height=650,
+    margin=dict(t=50, l=50, r=50, b=50),
+    xaxis_title="Time to expiry (years)",
+    yaxis_title="Underlying Asset Price (S)",
+)
+
+st.plotly_chart(fig_decay, use_container_width=True)
+
+st.markdown("---")
+
+# ---------------------------
+# Show raw grids as tables for reference
+# ---------------------------
+call_df = pd.DataFrame(call_price_grid, index=np.round(sigma_values,8), columns=np.round(S_values,4))
+call_df.index.name = "Volatility σ"
+call_df.columns.name = "Spot S"
+
+put_df = pd.DataFrame(put_price_grid, index=np.round(sigma_values,8), columns=np.round(S_values,4))
+put_df.index.name = "Volatility σ"
+put_df.columns.name = "Spot S"
+
+with st.expander("Show raw call price grid (Spot vs Volatility)"):
+    st.dataframe(call_df.style.format("{:.4f}"), height=300)
+
+with st.expander("Show raw put price grid (Spot vs Volatility)"):
+    st.dataframe(put_df.style.format("{:.4f}"), height=300)
+
+# ---------------------------
+# Notes
+# ---------------------------
+st.markdown(
+    """
+**Notes & tips**
+
+- The top table shows model inputs and inspect values.
+
+- The large colored price below the table is the option price at the chosen inspect inputs.
+
+- Heatmaps 1 & 2 show call and put prices over spot and volatility for the fixed time to expiry.
+
+- Heatmap 3 shows option price decay over time and spot for the selected option type.
+
+- Contour lines can be toggled on/off.
+
+- Let me know if you want Greeks or more features!
+"""
+)
+
