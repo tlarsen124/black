@@ -53,7 +53,7 @@ q = st.sidebar.number_input("Dividend yield (annual) q", value=0.00, format="%.2
 
 # Inspect values for pricing
 chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=100.00, format="%.2f")
-chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.2f")
+chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
 chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.2f")
 
 
@@ -98,7 +98,7 @@ inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chos
 summary_data = {
     "Variable": ["Strike (K)", "Risk-free rate (r)", "Dividend yield (q)", 
                  "Underlying Asset Price", "Volatility σ", "Time to expiry (T)"],
-    "Value": [f"{K:.2f}", f"{r:.4f}", f"{q:.4f}", f"{chosen_spot:.4f}", f"{chosen_sigma:.4f}", f"{chosen_T:.4f}"]}
+    "Value": [f"{K:.2f}", f"{r:.2f}", f"{q:.2f}", f"{chosen_spot:.2f}", f"{chosen_sigma:.4f}", f"{chosen_T:.2f}"]}
 summary_df = pd.DataFrame(summary_data)
 
 # Safe formatter for summary table
