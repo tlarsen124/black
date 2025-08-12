@@ -111,7 +111,7 @@ S_steps = st.sidebar.slider("Spot steps", min_value=20, max_value=50, value=20, 
 sigma_min = st.sidebar.number_input("Volatility min (σ)", value=0.05, min_value=0.0001, format="%.2f")
 sigma_max = st.sidebar.number_input("Volatility max (σ)", value=0.6, min_value=0.0001, format="%.2f")
 sigma_steps = st.sidebar.slider("Vol steps", min_value=10, max_value=50, value=20, step=1)
-
+show_greeks = st.sidebar.checkbox("Show Greeks", value=False)
 
 # Visualization options
 st.sidebar.markdown("---")
@@ -119,7 +119,7 @@ st.sidebar.write("Visualization options")
 log_spot = st.sidebar.checkbox("Plot spot on log scale (x-axis for grids 1 & 2)", value=False)
 show_contours = st.sidebar.checkbox("Show contour lines (all heatmaps)", value=True)
 colormap = st.sidebar.selectbox("Color map (plotly)", options=["Viridis","Plasma","Inferno","Magma","Cividis"], index=0)
-show_greeks = st.sidebar.checkbox("Show Greeks", value=False)
+
 
 # ---------------------------
 # Generate grids for heatmaps 1 & 2 (call & put)
