@@ -136,27 +136,6 @@ put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, opti
 inspect_call_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
 inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
-
-    def format_greeks(greeks_dict):
-        return {k: f"{v:.4f}" for k, v in greeks_dict.items()}
-
-    call_greeks_fmt = format_greeks(call_greeks)
-    put_greeks_fmt = format_greeks(put_greeks)
-
-    st.markdown("### Greeks at Chosen Inputs")
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown("#### Call Option Greeks")
-        greeks_df = pd.DataFrame.from_dict(call_greeks_fmt, orient='index', columns=['Value'])
-        st.table(greeks_df)
-
-    with col2:
-        st.markdown("#### Put Option Greeks")
-        greeks_df = pd.DataFrame.from_dict(put_greeks_fmt, orient='index', columns=['Value'])
-        st.table(greeks_df)
-
-# ---------------------------
 # Summary table (variables)
 # ---------------------------
 summary_data = {
@@ -191,6 +170,26 @@ if show_greeks:
     call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
     put_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
+    def format_greeks(greeks_dict):
+        return {k: f"{v:.4f}" for k, v in greeks_dict.items()}
+
+    call_greeks_fmt = format_greeks(call_greeks)
+    put_greeks_fmt = format_greeks(put_greeks)
+
+    st.markdown("### Greeks at Chosen Inputs")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Call Option Greeks")
+        greeks_df = pd.DataFrame.from_dict(call_greeks_fmt, orient='index', columns=['Value'])
+        st.table(greeks_df)
+
+    with col2:
+        st.markdown("#### Put Option Greeks")
+        greeks_df = pd.DataFrame.from_dict(put_greeks_fmt, orient='index', columns=['Value'])
+        st.table(greeks_df)
+
+# ---------------------------
 # ---------------------------
 # Helper to add heatmaps with contours and text
 # ---------------------------
