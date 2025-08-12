@@ -150,17 +150,25 @@ with col1:
     fig_call.update_layout(height=600, margin=dict(t=30, l=10, r=10, b=40))
     if log_spot:
         fig_call.update_xaxes(type="log")
-    if show_contours:
-        fig_contour = px.contour(
-            z=call_price_grid,
-            x=np.round(S_values, 4),
-            y=np.round(sigma_values, 6),
-            labels={"x": "Spot (S)", "y": "Volatility σ", "color": "Call Price"},
-            contours=dict(showlabels=True, coloring="none", start=call_price_grid.min(), end=call_price_grid.max(), size=(call_price_grid.max()-call_price_grid.min())/8),
-        )
-        for trace in fig_contour.data:
-            fig_call.add_trace(trace)
+    
+    import plotly.graph_objects as go
 
+if show_contours:
+    contour = go.Contour(
+        z=call_price_grid,
+        x=np.round(S_values, 4),
+        y=np.round(sigma_values, 6),
+        contours=dict(
+            coloring="none",
+            showlabels=True,
+            start=np.min(call_price_grid),
+            end=np.max(call_price_grid),
+            size=(np.max(call_price_grid) - np.min(call_price_grid)) / 8,
+        ),
+        line_width=1,
+        showscale=False,
+    )
+    fig_call.add_trace(contour)
     # Flip y axis so volatility increases upwards (lower volatility at bottom)
     fig_call.update_yaxes(autorange="reversed")
 
