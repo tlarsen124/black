@@ -229,7 +229,7 @@ if show_contours:
 
 fig_decay.update_layout(
     height=650,
-    xaxis_autorange='reversed'
+    xaxis_autorange='reversed',
     margin=dict(t=50, l=50, r=50, b=50),
     xaxis_title="Time to expiry (years)",
     yaxis_title="Underlying Asset Price (S)",
