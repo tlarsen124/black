@@ -188,8 +188,6 @@ st.dataframe(styled_df, width=700, height=180)
 
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
 
 
 # ---------------------------
