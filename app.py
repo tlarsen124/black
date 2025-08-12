@@ -97,7 +97,7 @@ inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chos
 # ---------------------------
 summary_data = {
     "Variable": ["Strike (K)", "Risk-free rate (r)", "Dividend yield (q)", 
-                 "Underlying Asset Price", "Volatility σ", "Time to expiry (T)", "Option type"],
+                 "Underlying Asset Price", "Volatility σ", "Time to expiry (T)"],
     "Value": [f"{K:.2f}", f"{r:.4f}", f"{q:.4f}", f"{chosen_spot:.4f}", f"{chosen_sigma:.4f}", f"{chosen_T:.4f}", option_type.capitalize()],
 }
 summary_df = pd.DataFrame(summary_data)
