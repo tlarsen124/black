@@ -203,7 +203,6 @@ heatmap_decay = go.Heatmap(
     x=np.round(T_decay_values, 4),
     y=np.round(S_decay_values, 2),
     colorscale=colormap.lower(),
-    colorbar=dict(title=f"{option_type.capitalize()} Price"),
     reversescale=False,
     hovertemplate="Time to expiry: %{x:.4f}<br>Spot: %{y}<br>Price: %{z:.4f}<extra></extra>",
     text=np.round(price_decay_grid, 2).astype(str),
