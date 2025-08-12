@@ -161,7 +161,6 @@ def add_heatmap(fig, z, x, y, title, colorbar_title):
         title=title,
         xaxis_title="Spot (S)",
         yaxis_title="Volatility σ",
-        yaxis_autorange="reversed",
         height=650,
         margin=dict(t=50, l=50, r=50, b=50),
     )
