@@ -191,7 +191,7 @@ T_decay_values = np.linspace(chosen_T, 0, 50)
 S_decay_values = np.linspace(S_min, S_max, S_steps)
 S_decay_grid, T_decay_grid = np.meshgrid(S_decay_values, T_decay_values)
 
-price_decay_grid = black_scholes_price(S_decay_grid, K, r, q, chosen_sigma, T_decay_grid, call)
+price_decay_grid = black_scholes_price(S_decay_grid, K, r, q, chosen_sigma, T_decay_grid, "call")
 
 st.markdown("---")
 st.markdown("### Option Price vs Underlying Asset Price and Time to Expiry (Time Decay)")
