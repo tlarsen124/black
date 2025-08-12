@@ -41,6 +41,48 @@ def black_scholes_price(S, K, r, q, sigma, T, option_type="call"):
 
     return price
 
+def black_scholes_greeks(S, K, r, q, sigma, T, option_type="call"):
+    S = np.array(S, dtype=float)
+    sigma = np.array(sigma, dtype=float)
+    T = np.maximum(T, 1e-12)  # Avoid division by zero
+    
+    d1 = (np.log(S / K) + (r - q + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+
+    pdf_d1 = norm.pdf(d1)
+    cdf_d1 = norm.cdf(d1)
+    cdf_d2 = norm.cdf(d2)
+    
+    exp_neg_qT = np.exp(-q * T)
+    exp_neg_rT = np.exp(-r * T)
+    
+    if option_type == "call":
+        delta = exp_neg_qT * cdf_d1
+        theta = (- (S * sigma * exp_neg_qT * pdf_d1) / (2 * np.sqrt(T))
+                 - r * K * exp_neg_rT * cdf_d2
+                 + q * S * exp_neg_qT * cdf_d1)
+        rho = K * T * exp_neg_rT * cdf_d2
+    else:
+        delta = -exp_neg_qT * norm.cdf(-d1)
+        theta = (- (S * sigma * exp_neg_qT * pdf_d1) / (2 * np.sqrt(T))
+                 + r * K * exp_neg_rT * norm.cdf(-d2)
+                 - q * S * exp_neg_qT * norm.cdf(-d1))
+        rho = -K * T * exp_neg_rT * norm.cdf(-d2)
+    
+    gamma = (exp_neg_qT * pdf_d1) / (S * sigma * np.sqrt(T))
+    vega = S * exp_neg_qT * pdf_d1 * np.sqrt(T)
+
+    theta /= 365.0  # per day
+
+    greeks = {
+        "Delta": delta,
+        "Gamma": gamma,
+        "Theta (per day)": theta,
+        "Vega": vega / 100,   # per 1% vol change
+        "Rho": rho / 100,     # per 1% rate change
+    }
+    return greeks
+
 # ---------------------------
 # Sidebar inputs - All under Model Inputs
 # ---------------------------
@@ -77,6 +119,7 @@ st.sidebar.write("Visualization options")
 log_spot = st.sidebar.checkbox("Plot spot on log scale (x-axis for grids 1 & 2)", value=False)
 show_contours = st.sidebar.checkbox("Show contour lines (all heatmaps)", value=True)
 colormap = st.sidebar.selectbox("Color map (plotly)", options=["Viridis","Plasma","Inferno","Magma","Cividis"], index=0)
+show_greeks = st.sidebar.checkbox("Show Greeks", value=False)
 
 # ---------------------------
 # Generate grids for heatmaps 1 & 2 (call & put)
@@ -91,6 +134,29 @@ put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, opti
 # Inspect price at chosen values for selected option type
 inspect_call_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
 inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
+
+if show_greeks:
+    call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
+    put_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
+
+    def format_greeks(greeks_dict):
+        return {k: f"{v:.4f}" for k, v in greeks_dict.items()}
+
+    call_greeks_fmt = format_greeks(call_greeks)
+    put_greeks_fmt = format_greeks(put_greeks)
+
+    st.markdown("### Greeks at Chosen Inputs")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Call Option Greeks")
+        greeks_df = pd.DataFrame.from_dict(call_greeks_fmt, orient='index', columns=['Value'])
+        st.table(greeks_df)
+
+    with col2:
+        st.markdown("#### Put Option Greeks")
+        greeks_df = pd.DataFrame.from_dict(put_greeks_fmt, orient='index', columns=['Value'])
+        st.table(greeks_df)
 
 # ---------------------------
 # Summary table (variables)
@@ -120,6 +186,8 @@ st.dataframe(styled_df, width=700, height=180)
 
 # Show inspected option price big & bold below table with color
 
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
 
