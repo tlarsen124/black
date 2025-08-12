@@ -51,6 +51,11 @@ K = st.sidebar.number_input("Strike (K)", value=100.0, min_value=0.01, step=1.0,
 r = st.sidebar.number_input("Risk-free rate (annual) r", value=0.02, format="%.4f")
 q = st.sidebar.number_input("Dividend yield (annual) q", value=0.00, format="%.4f")
 
+# Inspect values for pricing
+chosen_spot = st.sidebar.number_input("Underlying Asset Price", format="%.4f")
+chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
+chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.4f")
+option_type = st.sidebar.selectbox("Option type", ["call", "put"])
 
 
 st.sidebar.header("Heatmap Parameters")
@@ -59,11 +64,7 @@ S_min = st.sidebar.number_input("Spot min", value=50.0, format="%.2f")
 S_max = st.sidebar.number_input("Spot max", value=150.0, format="%.2f")
 S_steps = st.sidebar.slider("Spot steps", min_value=20, max_value=50, value=20, step=1)
 
-# Inspect values for pricing
-chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=(S_min + S_max) / 2, format="%.4f")
-chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
-chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.4f")
-option_type = st.sidebar.selectbox("Option type", ["call", "put"])
+
 
 # Volatility range and steps
 sigma_min = st.sidebar.number_input("Volatility min (σ)", value=0.05, min_value=0.0001, format="%.4f")
