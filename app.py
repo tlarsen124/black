@@ -165,17 +165,19 @@ st.dataframe(styled_df, width=700, height=180)
 
 st.markdown(
     """
-    <div style="display: flex; gap: 40px; margin-top: 10px;">
-        <div style="font-size: 30px; font-weight: bold; color: #2e7d32;">
+    <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 10px;">
+        <div style="font-size: 30px; font-weight: bold; color: #2e7d32; padding-left: 20px;">
             Call Price: {:.4f}
         </div>
-        <div style="font-size: 30px; font-weight: bold; color: #c62828;">
+        <div style="font-size: 30px; font-weight: bold; color: #c62828; padding-right: 20px;">
             Put Price: {:.4f}
         </div>
     </div>
     """.format(inspect_call_price, inspect_put_price),
     unsafe_allow_html=True
 )
+
+
 
 if show_greeks:
     call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
