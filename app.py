@@ -90,7 +90,8 @@ call_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, opt
 put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, option_type="put")
 
 # Inspect price at chosen values for selected option type
-inspect_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type=option_type)
+inspect_call_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
+inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
 # ---------------------------
 # Summary table (variables)
@@ -120,8 +121,10 @@ st.markdown("### Model Inputs and Inspect Values")
 st.dataframe(styled_df, width=700, height=180)
 
 # Show inspected option price big & bold below table with color
-price_color = "#2e7d32" if option_type == "call" else "#c62828"
-st.markdown(f'<div style="font-size:40px; font-weight:bold; color:{price_color}; margin-top:10px;">{option_type.capitalize()} Price at Inspect Values: {inspect_price:.4f}</div>', unsafe_allow_html=True)
+
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price at Inspect Values: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
+st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price at Inspect Values: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
+
 
 # ---------------------------
 # Helper to add heatmaps with contours and text
