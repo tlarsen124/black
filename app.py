@@ -48,11 +48,11 @@ st.sidebar.header("Model Inputs")
 
 # Strike, risk-free, dividend
 K = st.sidebar.number_input("Strike (K)", value=100.0, min_value=0.01, step=1.0, format="%.2f")
-r = st.sidebar.number_input("Risk-free rate (annual) r", value=0.02, format="%.4f")
+r = st.sidebar.number_input("Risk-free rate (annual) r", value=0.04, format="%.4f")
 q = st.sidebar.number_input("Dividend yield (annual) q", value=0.00, format="%.4f")
 
 # Inspect values for pricing
-chosen_spot = st.sidebar.number_input("Underlying Asset Price", format="%.4f")
+chosen_spot = st.sidebar.number_input("Underlying Asset Price", value=100, format="%.4f")
 chosen_sigma = st.sidebar.number_input("Volatility σ", value=0.20, format="%.4f")
 chosen_T = st.sidebar.number_input("Time to expiry (years) T", value=0.5, min_value=0.0, format="%.4f")
 option_type = st.sidebar.selectbox("Option type", ["call", "put"])
