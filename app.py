@@ -136,9 +136,6 @@ put_price_grid = black_scholes_price(S_grid, K, r, q, sigma_grid, chosen_T, opti
 inspect_call_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
 inspect_put_price = black_scholes_price(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
-if show_greeks:
-    call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
-    put_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
     def format_greeks(greeks_dict):
         return {k: f"{v:.4f}" for k, v in greeks_dict.items()}
@@ -190,6 +187,9 @@ st.dataframe(styled_df, width=700, height=180)
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
 st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
 
+if show_greeks:
+    call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
+    put_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="put")
 
 # ---------------------------
 # Helper to add heatmaps with contours and text
