@@ -163,8 +163,19 @@ st.dataframe(styled_df, width=700, height=180)
 
 # Show inspected option price big & bold below table with color
 
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#2e7d32; margin-top:10px;">Call Price: {inspect_call_price:.4f}</div>', unsafe_allow_html=True)
-st.markdown(f'<div style="font-size:30px; font-weight:bold; color:#c62828; margin-top:10px;">Put Price: {inspect_put_price:.4f}</div>', unsafe_allow_html=True)
+st.markdown(
+    """
+    <div style="display: flex; gap: 40px; margin-top: 10px;">
+        <div style="font-size: 30px; font-weight: bold; color: #2e7d32;">
+            Call Price: {:.4f}
+        </div>
+        <div style="font-size: 30px; font-weight: bold; color: #c62828;">
+            Put Price: {:.4f}
+        </div>
+    </div>
+    """.format(inspect_call_price, inspect_put_price),
+    unsafe_allow_html=True
+)
 
 if show_greeks:
     call_greeks = black_scholes_greeks(chosen_spot, K, r, q, chosen_sigma, chosen_T, option_type="call")
